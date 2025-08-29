@@ -1,0 +1,40 @@
+﻿@page "/AddRole"
+
+@using Microsoft.AspNetCore.Identity;
+@inject IServiceProvider _serviceProvider;
+@inject UserManager<Data.ApplicationUser> _userManager;
+
+<h3>AddRole</h3>
+
+<div class="p-3 border rounded shadow-sm" style="max-width: 300px;">
+    <div class="mb-3">
+        <label for="userInput" class="form-label">User</label>
+        <input id="userInput" class="form-control" @bind="_user" />
+    </div>
+
+    <div class="mb-3">
+        <label for="roleInput" class="form-label">Role</label>
+        <input id="roleInput" class="form-control" @bind="_role" />
+    </div>
+
+    <button class="btn btn-primary w-100" @onclick="CreateUserRoles">
+        Add Role
+    </button>
+</div>
+
+@code {
+    private string _user;
+    private string _role;
+
+    public async Task CreateUserRoles()
+    {
+        var roleManager = _serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        var userRoleCheck = await roleManager.RoleExistsAsync(_role);
+        if (!userRoleCheck)
+            await roleManager.CreateAsync(new IdentityRole(_role));
+
+        Data.ApplicationUser identityUser = await _userManager.FindByEmailAsync(_user);
+        await _userManager.AddToRoleAsync(identityUser, _role);
+    }
+}

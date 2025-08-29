@@ -1,0 +1,144 @@
+﻿@page "/"
+@inject AuthenticationStateProvider _authenticationStateProvider;
+@inject NavigationManager _navigationManager;
+@inject Codes.SymmetricEncryption _symmetricEncryption;
+@inject Codes.AsymmetricEncryption _asymmetricEncryption;
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthenticatedUser")]
+
+<PageTitle>Home</PageTitle>
+
+@* <div>
+    <h1>Hello, world!</h1>
+
+    Welcome to your new app.
+</div> *@
+
+@* <AuthorizeView>
+    <Authorized>
+        <h1>Hello, world!</h1>
+
+        Welcome to your new app.
+    </Authorized>
+    <NotAuthorized>
+        <h1>You are not logged in. </h1>
+    </NotAuthorized>
+</AuthorizeView> *@
+
+@* @if (_isAuthenticated)
+{
+    <div>
+        <h1>Hello, world!</h1>
+
+        Welcome to your new app.
+    </div>
+}
+
+else
+{
+    <div>Login to see page</div>
+} *@
+
+@*
+    Admin message
+*@
+
+@* <AuthorizeView>
+    <Authorized>
+        <div>You are logged in.</div>
+    </Authorized>
+    <NotAuthorized>
+        <div>You are not logged in. </div>
+    </NotAuthorized>
+</AuthorizeView>
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <div> You are admin.</div>
+    </Authorized>
+</AuthorizeView>
+
+@if (_isAuthenticated)
+{
+    <div>
+        You are logged in
+    </div>
+    @if (_isAdmin)
+    {
+        <div>You are Admin</div>
+    }
+}
+
+else
+{
+    <div>Login to see page</div>
+} *@
+
+@code {
+    // private bool _isAuthenticated;
+    // private bool _isAdmin;
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     var authenState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+    //     var user = authenState.User;
+    //     _isAuthenticated = user.Identity.IsAuthenticated;
+    //     _isAdmin = user.IsInRole("Admin");
+    // }
+
+    private bool _isAuthenticated;
+    private bool _isAdmin;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Codes.HashingHandler hashingHandler = new();
+        #region MD5
+        // MD5 Hashing
+
+        // string valueToHash1 = "33333333";
+        // string hashedValue = hashingHandler.MD5Hashing(valueToHash1);
+
+        // string valueToHash2 = "33333333";
+        // string hashedValue2 = hashingHandler.MD5Hashing(valueToHash2);
+
+        // bool isMatched = hashedValue == hashedValue2;
+        #endregion
+        #region PBKDF2
+        // PBKDF2Hashing
+
+        // byte[] valueToHash1AsByte2 = System.Text.Encoding.UTF8.GetBytes("33333333");
+        // byte[] hashedValue2 = hashingHandler.PBKDF2Hashing(valueToHash1AsByte2);
+
+        // byte[] valueToHash1AsByte = System.Text.Encoding.UTF8.GetBytes("33333333");
+        // byte[] hashedValue = hashingHandler.PBKDF2Hashing(valueToHash1AsByte);
+
+        // bool isMatched = hashedValue.SequenceEqual(hashedValue2);
+        #endregion
+        #region BCrypt
+        // BCrypt
+
+        string valueToHash1 = "33333333";
+        string hashedValue = hashingHandler.BCryptHashing1(valueToHash1);
+
+        string valueToHash2 = "33333333";
+        bool matched = hashingHandler.BCryptVerifyHashing1(valueToHash2, hashedValue);
+        #endregion
+        #region Symmetric Encryption
+        // Symmetric Encryption
+
+        // string textToEncrypt = "Køb mælk";
+
+        // var encryptedText = _symmetricEncryption.Encrypt(textToEncrypt);
+        // var decryptedText = _symmetricEncryption.Decrypt(encryptedText);
+        #endregion
+        #region Asymmetric Encryption
+        string textToEncrypt = "Køb mælk";
+        string encryptedText = await _asymmetricEncryption.EncryptAsymetric_webApi(textToEncrypt);
+        var decryptedText = _asymmetricEncryption.DecryptAsymmetric(encryptedText);
+        #endregion
+
+        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+            _navigationManager.NavigateTo("/CprNr");
+    }
+}
