@@ -12,12 +12,14 @@ namespace ServerSideIII.Codes
             using (RSA rsa = RSA.Create(2048))
             {
                 byte[] privateKeyBytes = rsa.ExportRSAPrivateKey();
-                _privateKey = "-----BEGIN PRIVATE KEY-----\n" +
+                _privateKey =
+                    "-----BEGIN PRIVATE KEY-----\n" +
                     Convert.ToBase64String(privateKeyBytes, Base64FormattingOptions.InsertLineBreaks) +
                     "-----END PRIVATE KEY-----\n";
 
                 byte[] publicKeyBytes = rsa.ExportSubjectPublicKeyInfo();
-                _privateKey = "-----BEGIN PUBLIC KEY-----\n" +
+                _publicKey =
+                    "-----BEGIN PUBLIC KEY-----\n" +
                     Convert.ToBase64String(publicKeyBytes, Base64FormattingOptions.InsertLineBreaks) +
                     "-----END PUBLIC KEY-----\n";
             }
@@ -78,7 +80,7 @@ namespace ServerSideIII.Codes
             using (HttpClient _httpClient = new HttpClient())
             {
                 var response = await _httpClient.PostAsync(
-                    "https://localhost:7003/encryptor",
+                    "https://localhost:7270/encryptor",
                     sc
                     );
                 responseMessage = response.Content.ReadAsStringAsync().Result;
