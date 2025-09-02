@@ -12,8 +12,8 @@ using ServerSideIII.Data;
 namespace ServerSideIII.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250829093804_InitialIdentity")]
-    partial class InitialIdentity
+    [Migration("20250902133253_InitApplication")]
+    partial class InitApplication
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

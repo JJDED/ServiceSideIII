@@ -28,7 +28,7 @@ builder.Services.AddAuthentication(options =>
 })
     .AddIdentityCookies();
 
-var toDoConnectionString = builder.Configuration.GetConnectionString("ToDoConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var toDoConnectionString = builder.Configuration.GetConnectionString("ToDoConnection") ?? throw new InvalidOperationException("Connection string 'TodoConnection' not found.");
 builder.Services.AddDbContext<TodoContext>(options =>
     options.UseSqlServer(toDoConnectionString));
 
@@ -77,16 +77,12 @@ builder.WebHost.UseKestrel((context, serverOptions) =>
     });
 });
 
+string kestrelCertUrl = builder.Configuration.GetValue<string>("KestrelCertUrl")
+    .Replace("%USERPROFILE%", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+string kestrelCertPassword = builder.Configuration.GetValue<string>("KestrelCertPassword");
 
-
-//string kestrelCertUrl = builder.Configuration.GetValue<string>("KestrelCertUrl")
-//    .Replace("%USERPROFILE%", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
-//string kestrelCertPassword = builder.Configuration.GetValue<string>("KestrelCertPassword");
-
-//builder.Configuration.GetSection("Kestrel:Endpoints:Https:Certificate:Path").Value = kestrelCertUrl;
-//builder.Configuration.GetSection("Kestrel:Endpoints:Https:Certificate:Password").Value = kestrelCertPassword;
-
-
+builder.Configuration.GetSection("Kestrel:Endpoints:Https:Certificate:Path").Value = kestrelCertUrl;
+builder.Configuration.GetSection("Kestrel:Endpoints:Https:Certificate:Password").Value = kestrelCertPassword;
 
 var app = builder.Build();
 

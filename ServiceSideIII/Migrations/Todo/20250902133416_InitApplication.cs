@@ -5,7 +5,7 @@
 namespace ServerSideIII.Migrations.Todo
 {
     /// <inheritdoc />
-    public partial class InitialIdentity : Migration
+    public partial class InitApplication : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
